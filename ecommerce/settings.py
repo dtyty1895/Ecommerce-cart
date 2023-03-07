@@ -39,8 +39,18 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 
     'store', # Django app
+
     'cart',  # Django app
+
+    'account', #Django app
+
+    'mathfilters',
+
+    'crispy_forms', # crispy_forms
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -65,7 +75,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                'store.views.categories',
+                'store.views.categories', #update
+                'cart.context_processors.cart',
             ],
         },
     },
@@ -131,3 +142,18 @@ MEDIA_ROOT = BASE_DIR / 'static/media'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+
+# Email configuration settings:
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = '587'
+EMAIL_USE_TLS = 'True'
+
+# Be sure to read the guide in the resources folder of this lecture (SETUP THE EMAIL BACKEND)
+
+EMAIL_HOST_USER = 'd.tyty1895@gmail.com' # - Enter your GMAIL address # The host email that sends password reset emails
+EMAIL_HOST_PASSWORD = 'lrnanguyrffilgym' # - Enter your app password 
+
