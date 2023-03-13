@@ -44,6 +44,8 @@ INSTALLED_APPS = [
 
     'account', #Django app
 
+    'payment', #Django app
+
     'mathfilters',
 
     'crispy_forms', # crispy_forms
@@ -63,6 +65,9 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "ecommerce.urls"
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY='same-origin-allow-popups'
+
 
 TEMPLATES = [
     {
@@ -156,4 +161,6 @@ EMAIL_USE_TLS = 'True'
 
 EMAIL_HOST_USER = 'd.tyty1895@gmail.com' # - Enter your GMAIL address # The host email that sends password reset emails
 EMAIL_HOST_PASSWORD = 'lrnanguyrffilgym' # - Enter your app password 
+
+
 

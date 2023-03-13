@@ -5,6 +5,9 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 
 from .forms import CreateUserForm, LoginForm, UpdateUserForm
+from payment.models import Order, OrderItem
+from payment.forms import ShippingForm
+from payment.models import ShippingAddress
 
 from django.contrib.sites.shortcuts import get_current_site
 from .token import user_tokenizer_generate
@@ -19,6 +22,7 @@ from django.contrib.auth import authenticate, login, logout
 
 from django.contrib.auth.decorators import login_required
 
+from django.contrib import messages
 
 def register(request):
 
@@ -123,7 +127,22 @@ def my_login(request):
 
 def user_logout(request):
 
-    auth.logout(request)
+    try:
+        for key in list(request.session.keys()):
+
+            if key == 'session_key':
+
+                continue
+            
+            else:
+
+                del request.session[key]
+    
+    except KeyError:
+
+        pass
+
+    messages.success(request, "Logout success")
 
     return redirect('store')
 
@@ -145,11 +164,14 @@ def profile_management(request):
 
         user_form = UpdateUserForm(request.POST, instance=request.user)
 
+
+
         if user_form.is_valid():
 
             user_form.save()
 
 
+            messages.info(request, "Account updated")
 
             return redirect('dashboard')
 
@@ -171,7 +193,7 @@ def delete_account(request):
         user.delete()
 
 
-        # messages.error(request, "Account deleted")
+        messages.error(request, "Account deleted")
 
 
         return redirect('store')
@@ -179,3 +201,69 @@ def delete_account(request):
 
     return render(request, 'account/delete-account.html')
 
+
+# Shipping view
+@login_required(login_url='my-login')
+def manage_shipping(request):
+
+    try:
+
+        # Account user with shipment information
+
+        shipping = ShippingAddress.objects.get(user=request.user.id)
+
+
+    except ShippingAddress.DoesNotExist:
+
+        # Account user with no shipment information
+
+        shipping = None
+
+
+    form = ShippingForm(instance=shipping)
+
+
+    if request.method == 'POST':
+
+        form = ShippingForm(request.POST, instance=shipping)
+
+        if form.is_valid():
+
+            # Assign the user FK on the object
+
+            shipping_user = form.save(commit=False)
+
+            # Adding the FK itself
+
+            shipping_user.user = request.user
+
+
+            shipping_user.save()
+
+            messages.info(request, "Update success!")
+
+            return redirect('dashboard')
+
+
+    context = {'form':form}
+
+    return render(request, 'account/manage-shipping.html', context=context)
+
+
+@login_required(login_url='my-login')
+def track_orders(request):
+
+    try:
+
+        orders = OrderItem.objects.filter(user=request.user)
+
+        context = {'orders':orders}
+
+        return render(request, 'account/track-orders.html', context=context)
+
+    except:
+
+        return render(request, 'account/track-orders.html')
+
+
+ 

@@ -16,6 +16,8 @@ urlpatterns = [
 
     #cart app
     path('cart/', include('cart.urls')),
+
+    path('payment/', include('payment.urls')),
     
 ]
 
